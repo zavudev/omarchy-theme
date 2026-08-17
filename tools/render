@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Renderiza el fondo Strands de Zavu a cualquier resolución.
+#
+#   ./render 3440 1440                  # paleta de canales (la del hero)
+#   ./render 3440 1440 signal           # paleta de marca, solo Signal Violet
+#   ./render 3440 1440 channels out.png
+#
+# El binario se compila la primera vez y se cachea junto al fuente.
+set -euo pipefail
+
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+bin="$here/.strands-bin"
+
+W=${1:-3440}
+H=${2:-1440}
+VARIANT=${3:-channels}
+OUT=${4:-"strands-${VARIANT}-${W}x${H}.png"}
+
+# t=43 s del reloj del shader. Elegido sobre un barrido de frames: es donde las
+# cinco hebras están mejor separadas y ninguna queda escondida bajo otra.
+TIME=43
+
+case "$VARIANT" in
+  # Los cinco colores de canal que V3Journey pasa a <Strands colors={...}>.
+  channels) PALETTE="#06B6D4,#EAB308,#FF4242,#1877F2,#7C3AED" ;;
+  # Misma geometría, un solo acento — la regla de color del tema.
+  signal)   PALETTE="#615FFF,#8482FF,#B9B7FF,#615FFF,#A5A3FF" ;;
+  *)        PALETTE="$VARIANT" ;;
+esac
+
+if [[ ! -x $bin || $here/strands.c -nt $bin ]]; then
+  gcc -O2 -o "$bin" "$here/strands.c" -lm
+fi
+
+"$bin" "$W" "$H" "$TIME" "$PALETTE" 5 | magick ppm:- "$OUT"
+echo "$OUT"

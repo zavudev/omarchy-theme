@@ -1,0 +1,47 @@
+# Zavu — Dark Theme
+# Paleta derivada de zavu-brand.md (Brand System V1.1, §5.1 y §5.3).
+#
+# Void Black es el sustrato. El violeta es señal, no decoración: aparece en el
+# borde de la ventana activa, el cursor y la selección, y en ningún sitio más.
+# Los seis hues ANSI son exactamente los cuatro colores de sistema de la marca
+# (§5.3) más el acento y su variante clara — la marca no define más hues, y
+# una terminal necesita separarlos para que el resaltado de sintaxis funcione.
+
+mode = "dark"
+
+# Acento único — Signal Violet
+accent = "#615FFF"
+selection = "#615FFF"
+muted = "#A1A1AA"
+
+# Fondos: Void Black y la escala de superficies de marca
+background = "#000000"
+dark_background = "#000000"
+darker_background = "#000000"
+lighter_background = "#18181B"
+
+# Tipografía
+foreground = "#FFFFFF"
+dark_foreground = "#52525B"
+light_foreground = "#E4E4E7"
+bright_foreground = "#FFFFFF"
+
+# Hues = colores de sistema de la marca (§5.3, versión Dark)
+red = "#FF5E5E"
+yellow = "#FFDA5E"
+orange = "#FF9C5E"
+green = "#4DF688"
+cyan = "#6EFAFF"
+blue = "#615FFF"
+magenta = "#A5A3FF"
+brown = "#52525B"
+
+bright_red = "#FF8181"
+bright_yellow = "#FFE281"
+bright_green = "#74F8A2"
+bright_cyan = "#8EFBFF"
+bright_blue = "#8482FF"
+bright_magenta = "#B9B7FF"
+
+selection_background = "#615FFF"
+selection_foreground = "#FFFFFF"

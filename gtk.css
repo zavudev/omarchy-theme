@@ -1,0 +1,178 @@
+    /* Zavu — GTK / libadwaita.
+     *
+     * Los nombres siguen siendo los ANSI que espera libadwaita, pero los
+     * valores son la paleta de marca: negro vacío, tipografía blanca,
+     * grises zinc para el cromo y Signal Violet como único acento. */
+
+    @define-color background     #000000;
+    @define-color foreground     #FFFFFF;
+    @define-color black          #000000;
+    @define-color red            #FF5E5E;
+    @define-color green          #4DF688;
+    @define-color yellow         #FFDA5E;
+    @define-color blue           #615FFF;
+    @define-color magenta        #A5A3FF;
+    @define-color cyan           #6EFAFF;
+    @define-color white          #FFFFFF;
+    @define-color bright_black   #27272A;
+    @define-color bright_red     #FF8181;
+    @define-color bright_green   #74F8A2;
+    @define-color bright_yellow  #FFE281;
+    @define-color bright_blue    #8482FF;
+    @define-color bright_magenta #B9B7FF;
+    @define-color bright_cyan    #8EFBFF;
+    @define-color bright_white   #FFFFFF;
+
+    /* Superficies de marca */
+    @define-color surface        #18181B;
+    @define-color surface_2      #27272A;
+    @define-color muted          #A1A1AA;
+
+    @define-color accent_bg_color @blue;
+    @define-color accent_fg_color @foreground;
+    @define-color accent_color @blue;
+
+    @define-color window_bg_color @background;
+    @define-color window_fg_color @foreground;
+
+    @define-color view_bg_color @background;
+    @define-color view_fg_color @foreground;
+    @define-color sidebar_bg_color @surface;
+    @define-color sidebar_fg_color @foreground;
+    @define-color sidebar_backdrop_color @background;
+    @define-color sidebar_shade_color @background;
+
+    @define-color headerbar_bg_color @background;
+    @define-color headerbar_fg_color @foreground;
+    @define-color headerbar_backdrop_color @background;
+    @define-color headerbar_shade_color @background;
+    @define-color card_bg_color @surface;
+    @define-color card_fg_color @foreground;
+
+    @define-color popover_bg_color @surface;
+    @define-color popover_fg_color @foreground;
+
+    @define-color destructive_bg_color @red;
+    @define-color destructive_fg_color @background;
+
+    @define-color success_bg_color @green;
+    @define-color success_fg_color @background;
+
+    @define-color warning_bg_color @yellow;
+    @define-color warning_fg_color @background;
+
+    @define-color error_bg_color @red;
+    @define-color error_fg_color @background;
+
+    @define-color dialog_bg_color @surface;
+    @define-color dialog_fg_color @foreground;
+
+    @define-color borders @surface_2;
+
+    @define-color theme_fg_color @foreground;
+    @define-color theme_text_color @foreground;
+    @define-color theme_bg_color @background;
+    @define-color theme_base_color @background;
+    @define-color theme_selected_bg_color @blue;
+    @define-color theme_selected_fg_color @foreground;
+    @define-color insensitive_bg_color @background;
+    @define-color insensitive_fg_color @muted;
+    @define-color insensitive_base_color @background;
+    @define-color theme_unfocused_fg_color @foreground;
+    @define-color theme_unfocused_text_color @foreground;
+    @define-color theme_unfocused_bg_color @background;
+    @define-color theme_unfocused_base_color @background;
+    @define-color theme_unfocused_selected_bg_color @surface_2;
+    @define-color theme_unfocused_selected_fg_color @foreground;
+    @define-color unfocused_insensitive_color @muted;
+    @define-color unfocused_borders @surface_2;
+    @define-color warning_color @yellow;
+    @define-color error_color @red;
+    @define-color success_color @green;
+    @define-color destructive_color @red;
+
+    @define-color content_view_bg @background;
+    @define-color text_view_bg @background;
+
+    messagedialog {
+        background-color: @dialog_bg_color;
+    }
+
+    messagedialog label {
+        color: @dialog_fg_color;
+        font-size: 14pt;
+        font-weight: bold;
+    }
+
+    /* El brand system prohíbe cursiva en etiquetas pequeñas (§4.6). */
+    messagedialog .secondary-text {
+        font-size: 10pt;
+        font-style: normal;
+        color: @muted;
+    }
+
+    messagedialog button {
+        background-color: @surface;
+        color: @foreground;
+        border: 1px solid @surface_2;
+        border-radius: 0;
+        padding: 10px;
+    }
+
+    messagedialog button:hover {
+        background-color: alpha(@blue, 0.16);
+        border-color: @blue;
+    }
+
+    banner revealer widget {
+        background: @surface;
+        padding: 5px;
+        color: @foreground;
+    }
+
+    alertdialog.background {
+        background-color: @dialog_bg_color;
+        color: @dialog_fg_color;
+    }
+
+    alertdialog .titlebar {
+        background-color: @headerbar_bg_color;
+        color: @headerbar_fg_color;
+    }
+
+    alertdialog box {
+        background-color: @dialog_bg_color;
+    }
+
+    alertdialog label {
+        color: @dialog_fg_color;
+    }
+
+    filechooser .dialog-action-box {
+        border-top: 1px solid @surface_2;
+    }
+
+    filechooser .dialog-action-box:backdrop {
+        border-top-color: @surface;
+    }
+
+    filechooser #pathbarbox {
+        border-bottom: 1px solid @surface_2;
+    }
+
+    filechooserbutton:drop(active) {
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+    toast {
+        background-color: @surface;
+        color: @foreground;
+        border: 1px solid @surface_2;
+        border-radius: 0;
+    }
+
+    toast button.circular.flat.image-button:hover {
+        color: @foreground;
+        background-color: alpha(@red, 0.2);
+    }

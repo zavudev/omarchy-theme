@@ -1,0 +1,99 @@
+# Zavu — btop.
+#
+# Los gráficos usan los colores de sistema de la marca (§5.3) en su papel
+# semántico real: verde = operativo, amarillo = atención, rojo = fallo. El
+# violeta queda para títulos y CPU, que es la señal que más se mira.
+
+# Main background
+theme[main_bg]="#000000"
+
+# Main text color
+theme[main_fg]="#FFFFFF"
+
+# Title color for boxes
+theme[title]="#615FFF"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#615FFF"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#615FFF"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#FFFFFF"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#52525B"
+
+# Color of text appearing on top of graphs
+theme[graph_text]="#A1A1AA"
+
+# Background color of the percentage meters
+theme[meter_bg]="#18181B"
+
+# Misc colors for processes box
+theme[proc_misc]="#A1A1AA"
+
+# CPU, Memory, Network, Proc box outline colors — hairline
+theme[cpu_box]="#27272A"
+theme[mem_box]="#27272A"
+theme[net_box]="#27272A"
+theme[proc_box]="#27272A"
+
+# Box divider line and small boxes line color
+theme[div_line]="#27272A"
+
+# Temperature graph color (frío -> atención -> fallo)
+theme[temp_start]="#6EFAFF"
+theme[temp_mid]="#FFDA5E"
+theme[temp_end]="#FF5E5E"
+
+# CPU graph colors — la señal
+theme[cpu_start]="#27272A"
+theme[cpu_mid]="#615FFF"
+theme[cpu_end]="#A5A3FF"
+
+# Mem/Disk free meter
+theme[free_start]="#27272A"
+theme[free_mid]="#52525B"
+theme[free_end]="#A1A1AA"
+
+# Mem/Disk cached meter
+theme[cached_start]="#27272A"
+theme[cached_mid]="#615FFF"
+theme[cached_end]="#8482FF"
+
+# Mem/Disk available meter
+theme[available_start]="#27272A"
+theme[available_mid]="#6EFAFF"
+theme[available_end]="#8EFBFF"
+
+# Mem/Disk used meter (operativo -> atención -> saturado)
+theme[used_start]="#4DF688"
+theme[used_mid]="#FFDA5E"
+theme[used_end]="#FF5E5E"
+
+# Download graph colors
+theme[download_start]="#27272A"
+theme[download_mid]="#6EFAFF"
+theme[download_end]="#8EFBFF"
+
+# Upload graph colors
+theme[upload_start]="#27272A"
+theme[upload_mid]="#615FFF"
+theme[upload_end]="#A5A3FF"
+
+# Process box color gradient
+theme[process_start]="#52525B"
+theme[process_mid]="#A1A1AA"
+theme[process_end]="#FFFFFF"
+
+# Graph gradient colors — del vacío a la señal
+theme[gradient_color_0]="#000000"
+theme[gradient_color_1]="#18181B"
+theme[gradient_color_2]="#27272A"
+theme[gradient_color_3]="#52525B"
+theme[gradient_color_4]="#A1A1AA"
+theme[gradient_color_5]="#615FFF"
+theme[gradient_color_6]="#A5A3FF"
+theme[gradient_color_7]="#FFFFFF"

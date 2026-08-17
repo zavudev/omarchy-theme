@@ -1,0 +1,12 @@
+# Zavu — cava. Del gris de fondo a la señal violeta. Un solo acento.
+[color]
+gradient = 1
+gradient_count = 8
+gradient_color_1 = '#27272A'
+gradient_color_2 = '#3F3F46'
+gradient_color_3 = '#52525B'
+gradient_color_4 = '#A1A1AA'
+gradient_color_5 = '#615FFF'
+gradient_color_6 = '#8482FF'
+gradient_color_7 = '#B9B7FF'
+gradient_color_8 = '#FFFFFF'

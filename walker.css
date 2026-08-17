@@ -1,0 +1,88 @@
+/* Zavu — lanzador (walker).
+ *
+ * Tarjeta sobre superficie elevada, borde hairline, esquinas rectas y sin
+ * sombra difusa. La fila seleccionada es el único punto de violeta. */
+
+@define-color base       #18181B;
+@define-color text       #FFFFFF;
+@define-color muted      #A1A1AA;
+@define-color border     #27272A;
+@define-color signal     #615FFF;
+@define-color foreground #FFFFFF;
+@define-color background #18181B;
+
+window * {
+    all: unset;
+
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+window .normal-icons,
+window .large-icons,
+window .item-image,
+window .symbols {
+    -gtk-icon-size: 18px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+window .box-wrapper {
+    background: @base;
+    border: 1px solid @border;
+    border-radius: 0;
+    padding: 8px;
+    margin: 0;
+    box-shadow: none;
+    line-height: 1em;
+}
+
+window .search-container {
+    border: none;
+    border-bottom: 1px solid @border;
+    border-radius: 0;
+    padding: 8px 10px 10px;
+    margin: 0 0 6px 0;
+    background: transparent;
+    box-shadow: none;
+    line-height: 1em;
+}
+
+window .search-container text,
+window .input {
+    color: @text;
+    caret-color: @signal;
+    background: transparent;
+}
+
+window .search-container .placeholder,
+window .search-container entry placeholder {
+    color: @muted;
+    opacity: 1;
+}
+
+window .item-box {
+    padding: 6px 10px;
+    border-radius: 0;
+}
+
+child:selected .item-box {
+    background-color: alpha(@signal, 0.16);
+}
+
+window .preview {
+    border: 1px solid @border;
+    border-radius: 0;
+    background: @base;
+    color: @text;
+    padding: 12px;
+    margin: 10px 0;
+    box-shadow: none;
+    line-height: 1em;
+}
