@@ -151,6 +151,13 @@ BarWidget {
     function toggle(): void { root.togglePanel() }
   }
 
+  // Sin esta pista, la barra dibuja la marca de "panel abierto" al 55% del
+  // ancho del slot y queda una línea corta y descentrada bajo unos pocos
+  // iconos. El panel es de todo el widget, así que la marca cubre la fila
+  // entera de workspaces — el hueco final no, que no pinta nada.
+  readonly property real openPanelIndicatorWidth: grid.implicitWidth
+  readonly property real openPanelIndicatorHeight: grid.implicitHeight
+
   readonly property real trailingGap: root.vertical ? 0 : Style.spaceReal(1.5)
 
   implicitWidth: grid.implicitWidth + trailingGap
