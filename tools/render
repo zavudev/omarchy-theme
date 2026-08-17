@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Renderiza el fondo Strands de Zavu a cualquier resolución.
+# Renderiza un fondo Strands de Zavu a cualquier resolución.
 #
-#   ./render 3440 1440                  # paleta de canales (la del hero)
-#   ./render 3440 1440 signal           # paleta de marca, solo Signal Violet
-#   ./render 3440 1440 channels out.png
+#   ./render 3440 1440                  # variante por defecto (channels)
+#   ./render 3440 1440 fan              # el abanico abierto
+#   ./render 3440 1440 pulse out.png
 #
 # El binario se compila la primera vez y se cachea junto al fuente.
 set -euo pipefail
@@ -16,21 +16,35 @@ H=${2:-1440}
 VARIANT=${3:-channels}
 OUT=${4:-"strands-${VARIANT}-${W}x${H}.png"}
 
-# t=43 s del reloj del shader. Elegido sobre un barrido de frames: es donde las
-# cinco hebras están mejor separadas y ninguna queda escondida bajo otra.
-TIME=43
+# Los cinco colores de canal que V3Journey pasa a <Strands colors={...}>.
+CHANNELS="#06B6D4,#EAB308,#FF4242,#1877F2,#7C3AED"
+# Misma familia, un solo acento — la regla de color del tema.
+SIGNAL="#615FFF,#8482FF,#B9B7FF,#615FFF,#A5A3FF"
 
+# t=43 s del reloj del shader. Elegido sobre un barrido de frames: es donde
+# las cinco hebras están mejor separadas y ninguna queda escondida bajo otra.
 case "$VARIANT" in
-  # Los cinco colores de canal que V3Journey pasa a <Strands colors={...}>.
-  channels) PALETTE="#06B6D4,#EAB308,#FF4242,#1877F2,#7C3AED" ;;
-  # Misma geometría, un solo acento — la regla de color del tema.
-  signal)   PALETTE="#615FFF,#8482FF,#B9B7FF,#615FFF,#A5A3FF" ;;
-  *)        PALETTE="$VARIANT" ;;
+  channels)
+    ARGS=(--time 43 --palette "$CHANNELS") ;;
+  signal)
+    ARGS=(--time 43 --palette "$SIGNAL") ;;
+  # uFanSpread abierto: las hebras convergen a un punto a la izquierda y se
+  # separan hacia la derecha. En la web es un estado de scroll que dura un
+  # instante; aquí se congela. Es la tesis de la marca dibujada en luz —
+  # cinco canales entrando por un solo punto.
+  fan)
+    ARGS=(--time 43 --fan 0.20 --palette "$CHANNELS") ;;
+  # A mitad del pulso de clic el haz entero colapsa al acento. Queda lo más
+  # contenido de todo el shader: hilos violeta finos sobre el vacío.
+  pulse)
+    ARGS=(--time 43 --pulse 0.50 --pulse-color "#615FFF" --palette "$CHANNELS") ;;
+  *)
+    ARGS=(--time 43 --palette "$VARIANT") ;;
 esac
 
 if [[ ! -x $bin || $here/strands.c -nt $bin ]]; then
   gcc -O2 -o "$bin" "$here/strands.c" -lm
 fi
 
-"$bin" "$W" "$H" "$TIME" "$PALETTE" 5 | magick ppm:- "$OUT"
+"$bin" "$W" "$H" "${ARGS[@]}" | magick ppm:- "$OUT"
 echo "$OUT"

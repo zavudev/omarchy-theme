@@ -34,6 +34,9 @@ const float SPREAD     = 1.0;
 const float INTENSITY  = 0.6;
 const float SATURATION = 1.5;
 const float SCALE      = 1.5;
+// uFanSpread. 0 = haz cerrado (el reposo del hero). El script tools/build-shaders
+// sustituye este valor para generar cada variante viva desde este mismo fuente.
+const float FAN        = 0.0; // {{FAN}}
 
 // <Strands colors={JOURNEY_COLORS}> — un color por canal.
 const vec3 C0 = vec3(0.0235, 0.7137, 0.8314); // #06B6D4
@@ -69,10 +72,18 @@ void main() {
     uv /= max(SCALE, 0.0001);
 
     float e = 0.06 + INTENSITY * 0.94;
+    float nx = (fc.x / uResolution.x) * 2.0 - 1.0;
 
-    // env: envolvente bundle, tapered en ambos extremos. En reposo fanT = 0,
-    // así que la envolvente del fan no entra en la mezcla.
-    float env = pow(max(cos(uv.x * PI * 1.3), 0.0), TAPER);
+    // env mezcla las dos envolventes en vez de conmutar en un umbral: el haz
+    // tapered en ambos extremos, y el abanico que converge a la izquierda y
+    // se abre a la derecha. Con FAN = 0, fanT = 0 y sólo queda el haz.
+    float fanT = smoothstep(0.0, 0.05, FAN);
+    float env = mix(
+      pow(max(cos(uv.x * PI * 1.3), 0.0), TAPER),
+      smoothstep(-1.0, -0.4, nx),
+      fanT
+    );
+    float fanRamp = smoothstep(-0.9, 0.9, nx);
 
     vec3 col = vec3(0.0);
 
@@ -89,17 +100,34 @@ void main() {
         float amp = (0.1 + 0.02 * e) * env * AMPLITUDE;
         float y = w * amp;
 
+        // Con el abanico abierto cada hebra acaba a una altura distinta.
+        float target = mix(FAN, -FAN, fi / float(COUNT - 1));
+        y += target * fanRamp;
+
         float d = abs(uv.y - y);
         float thick = (0.001 + 0.05 * e) * (0.35 + env) * THICKNESS;
         float g = thick / (d + thick * 0.45);
         g = g * g;
 
-        float h = fi / float(COUNT) + uv.x * 0.30 + uTime * 0.04;
+        // Abanico abierto: el tono se congela por hebra, así la hebra i
+        // mantiene el color del canal i en vez de derivar con x y el tiempo.
+        float h = mix(fi / float(COUNT) + uv.x * 0.30 + uTime * 0.04,
+                      fi / float(COUNT), fanT);
 
         col += samplePalette(h) * g * env;
     }
 
     col *= 0.45 + 0.7 * e;
+
+    // Apaga el brillo antes de los bordes para que el haz no parezca
+    // recortado por el lienzo. Sólo aplica con el abanico abierto.
+    {
+      float ey = 0.5 / max(SCALE, 0.0001);
+      float vy = 1.0 - smoothstep(ey * 0.78, ey, abs(uv.y));
+      float vr = 1.0 - smoothstep(0.82, 1.06, nx);
+      col *= mix(1.0, vy * vr, fanT);
+    }
+
     col = 1.0 - exp(-col * GLOW);
 
     float gray = dot(col, vec3(0.2126, 0.7152, 0.0722));

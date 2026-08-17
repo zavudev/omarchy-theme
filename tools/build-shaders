@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Compila los shaders de fondo vivo desde tools/strands.frag.
+#
+# Una sola fuente, una variante por valor de FAN. El nombre del .qsb es lo que
+# busca el plugin de fondo: un fondo `*-<nombre>-live.png` resuelve a
+# `tools/<nombre>.frag.qsb`.
+set -euo pipefail
+
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+qsb=$(command -v qsb || echo /usr/lib/qt6/bin/qsb)
+
+build() {
+  local name=$1 fan=$2 tmp
+  tmp=$(mktemp --suffix=.frag)
+  sed "s|^const float FAN .*|const float FAN        = ${fan};|" "$here/strands.frag" > "$tmp"
+  "$qsb" --glsl "100es,120,150,300es" --hlsl 50 --msl 12 -o "$here/$name.frag.qsb" "$tmp"
+  rm -f "$tmp"
+  echo "$name.frag.qsb (FAN=$fan)"
+}
+
+build strands    0.0
+build strandsfan 0.20

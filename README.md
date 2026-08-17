@@ -80,7 +80,19 @@ strand) with the uniforms the site passes it:
 | ![Strands, channel palette](backgrounds/01-strands.png) | ![Strands, Signal Violet](backgrounds/02-strands-signal.png) |
 | `01-strands.png` — the hero's channel palette (`#06B6D4 #EAB308 #FF4242 #1877F2 #7C3AED`). What the website shows. | `02-strands-signal.png` — same geometry, a single accent in the Signal Violet family. Keeps the one-accent rule (§5.5). |
 
+| ![Strands, fan open](backgrounds/05-strands-fan.png) | ![Strands, pulse collapse](backgrounds/06-strands-pulse.png) |
+| `05-strands-fan.png` — `uFanSpread` open. Five channels converge to a single point on the left and separate to the right. On the site this is a scroll state that lasts an instant. | `06-strands-pulse.png` — mid-click-pulse, where the whole bundle collapses to the accent. The most restrained frame the shader has: thin violet threads on void. |
+
 Plus `03-void.png` — pure black. The void as substrate.
+
+The last two are states the website only passes through. The renderer exposes
+every uniform, so anything the shader can reach can be frozen:
+
+```bash
+tools/render 3440 1440 fan
+tools/render 3440 1440 pulse
+.strands-bin 3440 1440 --fan 0.3 --active 2 --focus 1 > custom.ppm
+```
 
 ### Any resolution
 
@@ -160,9 +172,16 @@ Three things make this cheap rather than a battery leak:
   so the still and the live version are the same image at t=0. Switching
   between them, in either direction, has no visible seam.
 
-The shader source is `tools/strands.frag` (Qt 6 dialect); `tools/strands.frag.qsb`
-is the compiled form, rebuilt with
-`qsb --glsl "100es,120,150,300es" --hlsl 50 --msl 12 -o strands.frag.qsb strands.frag`.
+Two live variants ship: `04-strands-live.png` (resting bundle) and
+`07-strandsfan-live.png` (fan open). Both resolve to a `.qsb` of the same name.
+
+The shader source is `tools/strands.frag` (Qt 6 dialect) and `tools/build-shaders`
+compiles it once per variant, substituting the `FAN` constant. Run it after
+editing the shader:
+
+```bash
+tools/build-shaders     # -> strands.frag.qsb (FAN=0), strandsfan.frag.qsb (FAN=0.20)
+```
 
 ## What's in here
 
