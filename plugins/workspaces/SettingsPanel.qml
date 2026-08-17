@@ -33,6 +33,27 @@ Panel {
   property var ids: []
   property var icons: ({})
 
+  // Rejilla de iconos comunes, para que el caso normal sea un click y no un
+  // viaje al cheat sheet de Nerd Fonts. Van como codepoint y no como glifo
+  // literal: los caracteres de la Private Use Area no sobreviven a todas las
+  // tuberías de texto y una lista de ellos se lee como una columna de vacíos.
+  // Todos verificados contra la fuente que trae Omarchy.
+  readonly property var presetIcons: [
+    0xF120, 0xF121, 0xE73C, 0xE74E, 0xE7BA, 0xF1D3, 0xF09B, 0xF296,
+    0xF268, 0xF269, 0xF086, 0xF198, 0xF066F, 0xF099, 0xF0E0, 0xF292,
+    0xF001, 0xF1BC, 0xF03D, 0xF11B, 0xF1B6, 0xF030, 0xF03E, 0xF1FC,
+    0xF07B, 0xF02D, 0xF040, 0xF073, 0xF017, 0xF002, 0xF188, 0xF080,
+    0xF1C0, 0xF233, 0xF0C2, 0xE7B0, 0xF17C, 0xF179, 0xF17A, 0xF17B,
+    0xF015, 0xF013, 0xF023, 0xF0C3, 0xF135, 0xF0F4, 0xF005, 0xF04B
+  ]
+
+  // Con nueve campos en pantalla, una rejilla por campo no cabe: hay una sola
+  // abajo y escribe en la fila que tenga el foco. `fields` guarda la
+  // referencia de cada campo, que es la única forma de alcanzarlo desde
+  // fuera del delegado del Repeater.
+  property var fields: ({})
+  property int activeRow: -1
+
   readonly property color foreground: bar ? bar.foreground : Color.foreground
   readonly property color muted: Color.muted
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
@@ -128,13 +149,18 @@ Panel {
             placeholderText: "glyph or f121"
             foreground: root.foreground
             verticalPadding: Style.space(3)
+            Component.onCompleted: root.fields[String(modelData)] = field
             onAccepted: root.setIcon(modelData, text)
-            // Guarda también al salir del campo, para que tabular entre
-            // varias filas no pierda lo escrito en la anterior.
             onActiveFocusChanged: {
-              if (activeFocus) return
-              // Solo guarda si de verdad cambió: un campo que todavía no
-              // recibió su valor no puede borrar el icono al perder el foco.
+              // Al ganar el foco, esta fila pasa a ser el destino de la
+              // rejilla de abajo.
+              if (activeFocus) {
+                root.activeRow = modelData
+                return
+              }
+              // Al perderlo, guarda lo escrito — así tabular entre filas no
+              // pierde lo de la anterior. Solo si de verdad cambió: un campo
+              // que todavía no recibió su valor no puede borrar el icono.
               if (root.parseIcon(text) !== (root.icons[String(modelData)] || "")) root.setIcon(modelData, text)
             }
           }
@@ -151,9 +177,57 @@ Panel {
         }
       }
 
+      Grid {
+        id: presets
+        width: parent.width
+        columns: 8
+        spacing: Style.space(2)
+
+        readonly property real cell: Math.floor((width - spacing * (columns - 1)) / columns)
+
+        Repeater {
+          model: root.presetIcons
+
+          Rectangle {
+            required property var modelData
+            readonly property string glyph: String.fromCodePoint(modelData)
+            readonly property bool current: root.activeRow > 0
+              && (root.icons[String(root.activeRow)] || "") === glyph
+
+            width: presets.cell
+            height: presets.cell
+            radius: Style.cornerRadius
+            color: current
+              ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.18)
+              : (hover.hovered ? Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.08) : "transparent")
+
+            Text {
+              anchors.centerIn: parent
+              text: parent.glyph
+              color: root.foreground
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.icon
+            }
+
+            HoverHandler { id: hover }
+            TapHandler {
+              // Escribe y guarda en el mismo gesto: aquí no hay un Enter que
+              // cierre el panel como en un formulario de un solo campo, y un
+              // click que solo rellenara obligaría a volver al teclado.
+              onTapped: {
+                if (root.activeRow <= 0) return
+                var f = root.fields[String(root.activeRow)]
+                if (f) f.text = parent.glyph
+                root.setIcon(root.activeRow, parent.glyph)
+              }
+            }
+          }
+        }
+      }
+
       Text {
         width: parent.width
-        text: "Enter saves · empty clears · paste a glyph or type its hex"
+        text: "Click a row, then pick an icon · or type a glyph / hex · Enter saves"
         color: root.muted
         font.family: root.fontFamily
         font.pixelSize: Style.font.caption

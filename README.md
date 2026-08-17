@@ -210,11 +210,22 @@ workspace as before. There is an IPC entry point too, for a keybinding:
 o.bind("SUPER + ALT + W", "Workspace icons", "omarchy-shell <user>.workspaces toggle")
 ```
 
-Each row takes an icon in either of the two forms you are likely to have one
-in — **pasted as a glyph**, or typed as a **codepoint** (`f121`, `U+F121`,
-`0xF121`). Both are needed: a Nerd Font glyph cannot be typed and a codepoint
-cannot be read, so the live preview on the right settles it before you save.
-Enter saves, an empty field clears the icon back to a plain number.
+Click a row, then click an icon from the grid at the bottom — that writes it
+and saves in one gesture. The grid is 48 common ones; anything outside it goes
+in the row's field by hand, in either of the two forms you are likely to have
+an icon in: **pasted as a glyph**, or typed as a **codepoint** (`f121`,
+`U+F121`, `0xF121`). Both are needed — a Nerd Font glyph cannot be typed and a
+codepoint cannot be read — so the live preview beside each row settles it
+before you save. Enter saves a typed value, an empty field clears the icon back
+to a plain number.
+
+The icons are characters in the bar's font, not images. Omarchy ships
+JetBrainsMono Nerd Font and every codepoint in the grid was checked against it.
+To go past the grid, search the [Nerd Fonts cheat
+sheet](https://www.nerdfonts.com/cheat-sheet) and verify before relying on it —
+`fc-list ":charset=f121" family` comes back empty if your font lacks it. It
+usually still renders anyway, because the toolkit falls back to any other
+installed font that has the codepoint.
 
 Values are written to the widget's entry in `shell.json`, so they survive a
 restart and stay editable by hand like the rest of the bar:
