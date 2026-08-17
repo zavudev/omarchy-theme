@@ -99,6 +99,71 @@ The repository ships 3440×1440. `tools/render` compiles the shader on first
 use (needs `gcc` and ImageMagick) and takes about 100 ms per frame, so
 generating a set for every display you own is cheap.
 
+### Live wallpaper (optional)
+
+`04-strands-live.png` is the same still image as `01-strands.png`, and on a
+stock Omarchy that is all it is. Patch the background plugin, though, and the
+name suffix turns it into the real shader, running live on the desktop:
+
+```bash
+omarchy plugin clone omarchy.background
+# edits land in ~/.config/omarchy/plugins/<user>.background/Background.qml
+```
+
+Add to the root `Item` (and `import Quickshell.Services.UPower` at the top):
+
+```qml
+readonly property string liveShaderName: {
+  var base = String(displayedBackground).split("/").pop()
+  var m = base.match(/([A-Za-z0-9_]+)-live\.[A-Za-z0-9]+$/)
+  return m ? m[1] : ""
+}
+readonly property url liveShaderUrl: liveShaderName === ""
+  ? ""
+  : Util.fileUrl(stateHome + "/omarchy/current/theme/tools/" + liveShaderName + ".frag.qsb")
+readonly property bool liveShaderAllowed: !UPower.onBattery
+```
+
+And inside the `PanelWindow`, right after the `base` image:
+
+```qml
+ShaderEffect {
+  id: liveShader
+  anchors.fill: parent
+  visible: root.liveShaderUrl != "" && root.liveShaderAllowed
+  blending: false
+  fragmentShader: root.liveShaderUrl
+  property real uTime: 43.0
+  property vector2d uResolution: Qt.vector2d(width, height)
+}
+
+FrameAnimation {
+  running: liveShader.visible
+  onTriggered: liveShader.uTime += frameTime
+}
+```
+
+Then `omarchy restart shell` — a plugin hot-reload is not enough, the
+layer-shell surface has to be rebuilt.
+
+Three things make this cheap rather than a battery leak:
+
+- **Occluded means free.** The wallpaper is a Wayland layer surface. Cover it
+  with an opaque window and the compositor stops sending frame callbacks, so
+  `FrameAnimation` stops and the shader stops drawing. Measured at 0.00% CPU
+  with windows over it.
+- **On battery it turns itself off.** `UPower.onBattery` hides the shader, and
+  the still image underneath — the same pixels, rendered from the same shader —
+  takes over. The desktop does not change appearance, it just stops moving.
+  Back on AC it resumes on its own.
+- **`uTime` starts at 43.** That is the exact frame the PNGs were rendered at,
+  so the still and the live version are the same image at t=0. Switching
+  between them, in either direction, has no visible seam.
+
+The shader source is `tools/strands.frag` (Qt 6 dialect); `tools/strands.frag.qsb`
+is the compiled form, rebuilt with
+`qsb --glsl "100es,120,150,300es" --hlsl 50 --msl 12 -o strands.frag.qsb strands.frag`.
+
 ## What's in here
 
 | File | Drives |
