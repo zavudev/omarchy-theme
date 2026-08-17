@@ -183,6 +183,61 @@ editing the shader:
 tools/build-shaders     # -> strands.frag.qsb (FAN=0), strandsfan.frag.qsb (FAN=0.20)
 ```
 
+## Workspace icons (optional)
+
+Also not part of the theme — a patched copy of Omarchy's workspace widget that
+labels each workspace with an icon instead of leaving it a bare number, and
+ships a panel to change them without editing QML.
+
+![Workspace icons in the bar](docs/workspace-icons.png)
+
+![The settings panel](docs/workspace-panel.png)
+
+```bash
+omarchy plugin clone omarchy.workspaces
+cp plugins/workspaces/*.qml ~/.config/omarchy/plugins/<user>.workspaces/
+omarchy restart shell
+```
+
+`omarchy plugin clone` names the clone after your user, and both files are
+written to work under any such name: the widget takes its id from whatever the
+bar injects, so nothing here has to be renamed.
+
+**Right-click any workspace** to open the panel; left-click still focuses the
+workspace as before. There is an IPC entry point too, for a keybinding:
+
+```lua
+o.bind("SUPER + ALT + W", "Workspace icons", "omarchy-shell <user>.workspaces toggle")
+```
+
+Each row takes an icon in either of the two forms you are likely to have one
+in — **pasted as a glyph**, or typed as a **codepoint** (`f121`, `U+F121`,
+`0xF121`). Both are needed: a Nerd Font glyph cannot be typed and a codepoint
+cannot be read, so the live preview on the right settles it before you save.
+Enter saves, an empty field clears the icon back to a plain number.
+
+Values are written to the widget's entry in `shell.json`, so they survive a
+restart and stay editable by hand like the rest of the bar:
+
+```json
+{ "id": "<user>.workspaces", "icons": { "1": "\uf121", "2": "\uf268" } }
+```
+
+Written by hand, prefer the `\uXXXX` escapes above over pasting the glyphs:
+JSON decodes them to the same characters, and unlike a raw Private Use Area
+character they survive a copy-paste and are legible in a diff.
+
+The defaults in `Workspaces.qml` are stored as codepoints rather than literal
+glyphs — Private Use Area characters do not survive every text pipeline, and a
+map that renders as a column of empty strings in an editor is impossible to
+review.
+
+Two other changes to the stock widget, both visible above: workspaces 1–9 are
+always shown rather than only the occupied ones, and the focused workspace
+keeps its icon and takes the accent color instead of being replaced by a
+filled square — which used to hide the icon on the one workspace you were
+looking at.
+
 ## What's in here
 
 | File | Drives |
@@ -194,7 +249,8 @@ tools/build-shaders     # -> strands.frag.qsb (FAN=0), strandsfan.frag.qsb (FAN=
 | `btop.theme`, `cava_theme` | Terminal monitors |
 | `walker.css`, `swayosd.css`, `gtk.css`, `mako.ini` | Launcher, OSD, GTK apps, fallback notifications |
 | `neovim.lua`, `vencord.theme.css` | Editor, Discord |
-| `tools/` | The Strands wallpaper renderer |
+| `tools/` | The Strands wallpaper renderer and live shaders |
+| `plugins/workspaces/` | Optional patched workspace widget (see above) |
 
 ## License
 
