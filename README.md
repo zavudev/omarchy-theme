@@ -204,7 +204,8 @@ written to work under any such name: the widget takes its id from whatever the
 bar injects, so nothing here has to be renamed.
 
 **Right-click any workspace** to open the panel; left-click still focuses the
-workspace as before. There is an IPC entry point too, for a keybinding:
+workspace as before. Each row takes an **icon** and a **label**: the icon
+identifies the workspace at a glance, the label says what it is in words. There is an IPC entry point too, for a keybinding:
 
 ```lua
 o.bind("SUPER + ALT + W", "Workspace icons", "omarchy-shell <user>.workspaces toggle")
@@ -231,8 +232,17 @@ Values are written to the widget's entry in `shell.json`, so they survive a
 restart and stay editable by hand like the rest of the bar:
 
 ```json
-{ "id": "<user>.workspaces", "icons": { "1": "\uf121", "2": "\uf268" } }
+{
+  "id": "<user>.workspaces",
+  "icons": { "1": "\uf121", "2": "\uf268" },
+  "labels": { "1": "code", "2": "web" }
+}
 ```
+
+Labels show on the focused workspace only. Nine of them at once eat half the
+bar and the icon already identifies each one, so the word is there for where
+you are rather than for where you are not. Set `"labelsAlways": true` on the
+same entry to show them all.
 
 Written by hand, prefer the `\uXXXX` escapes above over pasting the glyphs:
 JSON decodes them to the same characters, and unlike a raw Private Use Area

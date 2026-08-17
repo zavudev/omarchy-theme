@@ -32,6 +32,7 @@ Panel {
   // Inyectados por el widget: los ids a listar y el mapa efectivo actual.
   property var ids: []
   property var icons: ({})
+  property var labels: ({})
 
   // Rejilla de iconos comunes, para que el caso normal sea un click y no un
   // viaje al cheat sheet de Nerd Fonts. Van como codepoint y no como glifo
@@ -90,6 +91,17 @@ Panel {
     return String.fromCodePoint(value.codePointAt(0))
   }
 
+  function setLabel(id, raw) {
+    var next = {}
+    for (var key in root.labels) if (root.labels[key]) next[key] = root.labels[key]
+
+    var text = String(raw || "").trim()
+    if (text === "") delete next[String(id)]
+    else next[String(id)] = text
+
+    persistSettings({ labels: next })
+  }
+
   function setIcon(id, raw) {
     var next = {}
     for (var key in root.icons) if (root.icons[key]) next[key] = root.icons[key]
@@ -107,7 +119,7 @@ Panel {
     owner: root.barIdentity
     bar: root.bar
     open: root.opened
-    contentWidth: panel.fittedContentWidth(Style.space(300))
+    contentWidth: panel.fittedContentWidth(Style.space(420))
     contentHeight: panel.fittedContentHeight(column.implicitHeight)
 
     Column {
@@ -117,7 +129,7 @@ Panel {
 
       PanelSectionHeader {
         width: parent.width
-        text: "WORKSPACE ICONS"
+        text: "WORKSPACE LABELS"
         foreground: root.foreground
         fontFamily: root.fontFamily
       }
@@ -144,9 +156,11 @@ Panel {
           TextField {
             id: field
             anchors.verticalCenter: parent.verticalCenter
-            width: parent.width - Style.space(16) - Style.space(28) - Style.space(16)
+            // Estrecho a propósito: aquí solo cabe un glifo, y darle más
+            // ancho invitaría a escribir un nombre en el campo equivocado.
+            width: Style.space(86)
             text: root.icons[String(modelData)] || ""
-            placeholderText: "glyph or f121"
+            placeholderText: "icon"
             foreground: root.foreground
             verticalPadding: Style.space(3)
             Component.onCompleted: root.fields[String(modelData)] = field
@@ -162,6 +176,21 @@ Panel {
               // pierde lo de la anterior. Solo si de verdad cambió: un campo
               // que todavía no recibió su valor no puede borrar el icono.
               if (root.parseIcon(text) !== (root.icons[String(modelData)] || "")) root.setIcon(modelData, text)
+            }
+          }
+
+          TextField {
+            id: labelField
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width - Style.space(16) - Style.space(86) - Style.space(28) - Style.space(24)
+            text: root.labels[String(modelData)] || ""
+            placeholderText: "label"
+            foreground: root.foreground
+            verticalPadding: Style.space(3)
+            onAccepted: root.setLabel(modelData, text)
+            onActiveFocusChanged: {
+              if (activeFocus) return
+              if (text.trim() !== (root.labels[String(modelData)] || "")) root.setLabel(modelData, text)
             }
           }
 
@@ -227,7 +256,7 @@ Panel {
 
       Text {
         width: parent.width
-        text: "Click a row, then pick an icon · or type a glyph / hex · Enter saves"
+        text: "Icon: pick below, or type a glyph / hex · Label: free text · Enter saves"
         color: root.muted
         font.family: root.fontFamily
         font.pixelSize: Style.font.caption

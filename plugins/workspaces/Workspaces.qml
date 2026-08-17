@@ -62,6 +62,23 @@ BarWidget {
     return root.workspaceIcons[String(id)] || ""
   }
 
+  readonly property var workspaceLabels: {
+    var stored = root.settings ? root.settings.labels : null
+    var out = {}
+    if (stored) for (var key in stored) out[String(key)] = String(stored[key] || "")
+    return out
+  }
+
+  function labelFor(id) {
+    return root.workspaceLabels[String(id)] || ""
+  }
+
+  // Cuántos workspaces muestran su texto. Nueve etiquetas a la vez se comen
+  // media barra, y el icono ya identifica cada uno, así que por defecto solo
+  // la lleva el enfocado. `"labelsAlways": true` en shell.json las muestra
+  // todas.
+  readonly property bool labelsAlways: root.settings ? root.settings.labelsAlways === true : false
+
   // El número es la tecla que hay que pulsar, así que va delante del icono:
   // el icono dice para qué es el workspace, el número dice cómo llegar.
   function numberFor(id) {
@@ -123,6 +140,7 @@ BarWidget {
     // el acto, así que `icons` tiene que llegar antes o los campos nacen
     // vacíos y el primer foco perdido los guardaría así.
     if ("icons" in target) target.icons = root.workspaceIcons
+    if ("labels" in target) target.labels = root.workspaceLabels
     if ("ids" in target) target.ids = root.workspaceIds()
   }
 
@@ -229,6 +247,15 @@ BarWidget {
             text: root.iconFor(button.modelData)
             font.family: button.fontFamily
             font.pixelSize: button.fontSize
+            color: button.contentColor
+          }
+
+          Text {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: text !== "" && !root.vertical
+            text: (root.labelsAlways || button.focused) ? root.labelFor(button.modelData) : ""
+            font.family: button.fontFamily
+            font.pixelSize: Math.round(button.fontSize * 0.9)
             color: button.contentColor
           }
         }
