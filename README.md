@@ -2,6 +2,8 @@
 
 > One API. Every message.
 
+![Zavu](preview.png)
+
 Tema oscuro de Omarchy derivado de **Zavu Brand System V1.1**
 (`zavu-brand.md`). Infraestructura de comunicación con precisión científica
 y minimalismo editorial, aplicada al escritorio.
@@ -47,11 +49,12 @@ evaluado en el estado de reposo del hero (sin pulso, sin fan, sin ratón,
 sin strand activo) con los uniformes que le pasa `V3Journey`:
 `count=5 · scale=1.5 · amplitude=1.05 · glow=2.6 · speed=0.18`.
 
-- `01-strands.png` — la paleta de canales del hero
-  (`#06B6D4 #EAB308 #FF4242 #1877F2 #7C3AED`). Es lo que se ve en la web.
-- `02-strands-signal.png` — misma geometría, un solo acento en la familia
-  Signal Violet. Cumple la regla de un acento por composición (§5.5).
-- `03-void.png` — negro puro. El vacío como sustrato.
+| | |
+|---|---|
+| ![Strands, paleta de canales](backgrounds/01-strands.png) | ![Strands, Signal Violet](backgrounds/02-strands-signal.png) |
+| `01-strands.png` — la paleta de canales del hero (`#06B6D4 #EAB308 #FF4242 #1877F2 #7C3AED`). Es lo que se ve en la web. | `02-strands-signal.png` — misma geometría, un solo acento en la familia Signal Violet. Cumple la regla de un acento por composición (§5.5). |
+
+Y `03-void.png` — negro puro. El vacío como sustrato.
 
 ### Cualquier resolución
 
